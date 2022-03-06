@@ -1,5 +1,7 @@
 pipeline {
-  agent { label 'linux'}
+  agent { 
+      docker { image 'node:16.13.1-alpine' }
+    }
   options {
     skipDefaultCheckout(true)
   }
