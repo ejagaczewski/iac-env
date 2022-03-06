@@ -1,6 +1,6 @@
 pipeline {
   agent { 
-      kubernetes { image 'node:16.13.1-alpine' }
+      kubernetes { label 'kubeagent' }
     }
   options {
     skipDefaultCheckout(true)
