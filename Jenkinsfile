@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
-        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+        AWS_ACCESS_KEY_ID     = "AKIAR2MD64656UHZYG7K"
+        AWS_SECRET_ACCESS_KEY = "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"
         AWS_DEFAULT_REGION    = "eu-west-1"
         BACKEND_BUCKET        = "jenkins-terraform-pipeline-state"
     }
