@@ -3,3 +3,4 @@ node {
     {
         terraform init
     }
+}
