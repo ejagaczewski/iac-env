@@ -23,7 +23,7 @@ podTemplate(containers: [
                     cd iac-env
                     terraform init
                     terraform plan
-                    terraform apply
+                    terraform apply -auto-approve
                     '''
                 }
 
