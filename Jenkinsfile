@@ -23,7 +23,7 @@ podTemplate(containers: [
                     sh '''
                     cd iac-env
                     terraform init
-                    terraform plan -out
+                    terraform plan -out=plan.tfplanjson
                     curl -o wizcli https://wizcli.test.wiz.io/wizcli
                     chmod +x wizcli
                     WIZ_ENV=test ./wizcli auth --id $WIZ_ID --secret $WIZ_SECRET
