@@ -24,6 +24,7 @@ podTemplate(containers: [
                     terraform init
                     '''
                 }
+                }
             }
         }
     }
