@@ -22,14 +22,11 @@ podTemplate(containers: [
                     sh '''
                     cd iac-env
                     terraform init
-                    '''
-                }
-                stage('Terraform plan&apply') {
-                    sh '''
                     terraform plan
                     terraform apply
                     '''
                 }
+
                 }
             }
         }
