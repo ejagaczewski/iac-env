@@ -3,6 +3,7 @@ podTemplate(containers: [
   ]) {
 
     node(POD_LABEL) {
+        echo "${env.getEnvironment()}"
         stage('Get Terraform') {
             container('ubuntu') {
                 stage('Get terraform') {
@@ -18,11 +19,19 @@ podTemplate(containers: [
                     git clone https://github.com/ejagaczewski/iac-env.git
                     '''
                     }
-                stage('Terraform init') {
+                stage('Terraform Plan & Scan with wiz') {
                     sh '''
                     cd iac-env
                     terraform init
                     terraform plan
+                    curl -o wizcli https://wizcli.test.wiz.io/wizcli
+                    chmod +x wizcli
+                    WIZ_ENV=test ./wizcli auth --id $WIZ_ID --secret $WIZ_SECRET
+                    '''
+                    }
+                stage('Terraform init') {
+                    sh '''
+                    cd iac-env
                     terraform apply -auto-approve
                     '''
                 }
