@@ -24,6 +24,12 @@ podTemplate(containers: [
                     terraform init
                     '''
                 }
+                stage('Terraform plan&apply') {
+                    sh '''
+                    terraform plan
+                    terraform apply
+                    '''
+                }
                 }
             }
         }
