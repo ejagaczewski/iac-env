@@ -20,6 +20,7 @@ podTemplate(containers: [
                     }
                 stage('Terraform init') {
                     sh '''
+                    cd iac-env
                     terraform init
                     '''
                 }
