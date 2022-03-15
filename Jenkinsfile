@@ -1,92 +1,40 @@
 pipeline {
-    agent any
-
-    environment {
-        AWS_ACCESS_KEY_ID     = "AKIAR2MD64656UHZYG7K"
-        AWS_SECRET_ACCESS_KEY = "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"
-        AWS_DEFAULT_REGION    = "eu-west-1"
-        BACKEND_BUCKET        = "jenkins-terraform-pipeline-state"
+  parameters {
+    password (name: 'AWS_ACCESS_KEY_ID')
+    password (name: 'AWS_SECRET_ACCESS_KEY')
+  }
+  environment {
+    TF_WORKSPACE = 'dev' //Sets the Terraform Workspace
+    TF_IN_AUTOMATION = 'true'
+    AWS_ACCESS_KEY_ID = "${params.AWS_ACCESS_KEY_ID}"
+    AWS_SECRET_ACCESS_KEY = "${params.AWS_SECRET_ACCESS_KEY}"
+  }
+  stages {
+    stage('Terraform Init') {
+      steps {
+        sh "${env.TERRAFORM_HOME}/terraform init -input=false"
+      }
     }
-
-    parameters {
-        choice(
-            name: 'Action',
-            choices: ['Build', 'Destroy'],
-            description: 'The action to take'
-        )
-        choice(
-            name: 'Colour',
-            choices: ['Blue', 'Green'],
-            description: 'The environment to use'
-        )
+    stage('Terraform Plan') {
+      steps {
+        sh "${env.TERRAFORM_HOME}/terraform plan -out=tfplan -input=false -var-file='dev.tfvars'"
+      }
     }
-
-    stages {
-        stage('Init') {
-            steps {
-                terraformInit()
-            }
-        }
-        stage('Plan') {
-            steps {
-                terraformPlan()
-            }
-        }
-        stage('Approval') {
-            steps {
-                input(message: 'Apply Terraform ?')
-            }
-        }
-        stage('Apply') {
-            steps {
-                terraformApply()
-            }
-        }
-        stage('Validate') {
-            steps {
-                inspecValidation()
-            }
-        }
+    stage('Terraform Apply') {
+      steps {
+        input 'Apply Plan'
+        sh "${env.TERRAFORM_HOME}/terraform apply -input=false tfplan"
+      }
     }
-    post {
-        always {
-            echo 'Deleting Directory!'
-            deleteDir()
-        }
+    stage('AWSpec Tests') {
+      steps {
+          sh '''#!/bin/bash -l
+bundle install --path ~/.gem
+bundle exec rake spec || true
+'''
+
+        junit(allowEmptyResults: true, testResults: '**/testResults/*.xml')
+      }
     }
-}
-
-def terraformInit() {
-    sh("""
-        terraform init
-    """)
-}
-
-def terraformPlan() {
-    // Setting Terraform Destroy flag
-    if(params.Action == 'Destroy') {
-        env.DESTROY = '-destroy'
-    } else {
-        env.DESTROY = ""
-    }
-
-    sh("""
-        cd Terraform/Demo;
-        terraform plan ${env.DESTROY} -var-file=${params.Colour.toLowerCase()}.tfvars -no-color -out=tfout
-    """)
-}
-
-def terraformApply() {
-    sh("""
-        cd Terraform/Demo;
-        terraform apply tfout -no-color
-        mkdir ../../Inspec/files/
-        terraform output --json > ../../Inspec/files/output.json
-    """)
-}
-
-def inspecValidation() {
-    sh("""
-        inspec exec Inspec/ -t aws:// --input workspace=${params.Colour}
-    """)
+  }
 }
