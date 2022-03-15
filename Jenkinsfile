@@ -1,15 +1,9 @@
 pipeline {
+  agent any
   parameters {
     password (name: 'AWS_ACCESS_KEY_ID')
     password (name: 'AWS_SECRET_ACCESS_KEY')
   }
-  podTemplate {
-    node("jenkins-jenkins-agent") {
-        stage('Run shell') {
-            sh 'echo hello world'
-        }
-    }
-}
   environment {
     TF_WORKSPACE = 'dev' //Sets the Terraform Workspace
     TF_IN_AUTOMATION = 'true'
