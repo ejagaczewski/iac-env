@@ -5,7 +5,6 @@ podTemplate(containers: [
     node(POD_LABEL) {
         stage('Get Terraform') {
             container('ubuntu') {
-                git 'https://github.com/ejagaczewski/iac-env.git'
                 stage('Get terraform') {
                     sh '''
                     apt-get update && apt-get install -y gnupg software-properties-common curl
