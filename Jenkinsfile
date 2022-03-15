@@ -14,6 +14,15 @@ podTemplate(containers: [
                     terraform --version
                     ls
                     '''
+                stage('Pull IaC Template') {
+                    sh '''
+                    git clone https://github.com/ejagaczewski/iac-env.git
+                    '''
+                    }
+                stage('Terraform init') {
+                    sh '''
+                    terraform init
+                    '''
                 }
             }
         }
