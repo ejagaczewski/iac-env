@@ -7,6 +7,7 @@ podTemplate(containers: [
             container('ubuntu') {
                 stage('Get terraform') {
                     sh '''
+                    apt-get update
                     apt-get install terraform
                     terraform --version
                     '''
