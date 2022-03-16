@@ -30,7 +30,7 @@ podTemplate(containers: [
                     WIZ_ENV=test ./wizcli iac scan --path plan.tfplanjson
                     '''
                     }
-                stage('Terraform init') {
+                stage('Deploy Template') {
                     sh '''
                     cd iac-env
                     terraform apply -auto-approve
